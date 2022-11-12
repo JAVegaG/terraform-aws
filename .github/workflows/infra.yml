@@ -53,13 +53,14 @@ jobs:
         run: terraform plan -no-color
         continue-on-error: true
 
-      - uses: actions/github-script@v6
+      - name: Description
+        uses: actions/github-script@v6
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           script: |
-            const output = `### Terraform workspace \'$WORKSPACE \'
+            const output = `### Terraform workspace \'${{ env.WORKSPACE }} \'
             #### Terraform Format and Style 🖌 \'${{ steps.fmt.outcome }}\'
             #### Terraform Initialization ⚙️ \'${{ steps.init.outcome }}\'
             #### Terraform Validation 🤖 \'${{ steps.validate.outcome }}\'
@@ -76,7 +77,7 @@ jobs:
             <details><summary>Show Plan</summary>
 
             \'\'\'\n
-            $PLAN
+            ${{ env.PLAN }}
             \'\'\'
 
             </details>
