@@ -60,7 +60,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           script: |
-            const output = `### Terraform workspace \'${{ env.WORKSPACE }} \'
+            const output = `### Terraform workspace \'${process.env.WORKSPACE} \'
             #### Terraform Format and Style 🖌 \'${{ steps.fmt.outcome }}\'
             #### Terraform Initialization ⚙️ \'${{ steps.init.outcome }}\'
             #### Terraform Validation 🤖 \'${{ steps.validate.outcome }}\'
@@ -77,7 +77,7 @@ jobs:
             <details><summary>Show Plan</summary>
 
             \'\'\'\n
-            ${{ env.PLAN }}
+            ${process.env.PLAN}
             \'\'\'
 
             </details>
