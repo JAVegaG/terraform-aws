@@ -22,11 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: set up node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
       - name: Install terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -34,7 +29,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Install aws
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -62,10 +57,10 @@ jobs:
         uses: actions/github-script@v6
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        run: echo "Terraform workspace \'${{ env.WORKSPACE }} \'" >> $GITHUB_STEP_SUMMARY
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           script: |
-            echo "Terraform workspace \'${{ env.WORKSPACE }} \'" >> $GITHUB_STEP_SUMMARY
             const output = `#### Terraform Format and Style 🖌 \'${{ steps.fmt.outcome }}\'
             #### Terraform Initialization ⚙️ \'${{ steps.init.outcome }}\'
             #### Terraform Validation 🤖 \'${{ steps.validate.outcome }}\'
@@ -91,7 +86,7 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
-            echo output >> $GITHUB_STEP_SUMMARY
+        run: echo output >> $GITHUB_STEP_SUMMARY
       
       - name: Terraform Apply
         id: apply
