@@ -22,6 +22,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: set up node
+        uses: actions/setup-node@v3
+        with:
+        node-version: 16
+
       - name: Install terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -60,8 +65,8 @@ jobs:
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           script: |
-            const output = `### Terraform workspace \'${process.env.WORKSPACE} \'
-            #### Terraform Format and Style 🖌 \'${{ steps.fmt.outcome }}\'
+            echo "Terraform workspace \'${{ env.WORKSPACE }} \'" >> $GITHUB_STEP_SUMMARY
+            const output = `#### Terraform Format and Style 🖌 \'${{ steps.fmt.outcome }}\'
             #### Terraform Initialization ⚙️ \'${{ steps.init.outcome }}\'
             #### Terraform Validation 🤖 \'${{ steps.validate.outcome }}\'
             <details><summary>Validation Output</summary>
@@ -72,13 +77,9 @@ jobs:
 
             </details>
 
-            #### Terraform Plan 📖 \'${{ steps.plan.outcome }}\'
-
             <details><summary>Show Plan</summary>
 
-            \'\'\'\n
-            ${process.env.PLAN}
-            \'\'\'
+            #### Terraform Plan 📖 \'${{ steps.plan.outcome }}\'
 
             </details>
 
