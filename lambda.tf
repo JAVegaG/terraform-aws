@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "write_lambda" { #Create - Update - Delete
 
   filename      = "foo.zip"
-  function_name = "http-write-${var.region}-${terraform_workspace}-${random_uuid.name.result}"
+  function_name = "http-write-${var.region}-${var.workspace}-${random_uuid.name.result}"
   role          = aws_iam_role.lambda_iam_write_dynamodb.arn
 
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
@@ -23,7 +23,7 @@ resource "aws_lambda_function" "write_lambda" { #Create - Update - Delete
 resource "aws_lambda_function" "read_lambda" {
 
   filename      = "foo.zip"
-  function_name = "http-read-${var.region}-${terraform_workspace}-${random_uuid.name.result}"
+  function_name = "http-read-${var.region}-${var.workspace}-${random_uuid.name.result}"
   role          = aws_iam_role.lambda_iam_read_dynamodb.arn
 
   source_code_hash = filebase64sha256("foo.zip")

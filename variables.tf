@@ -3,3 +3,9 @@ variable "region" {
   type        = string
   default     = "us-east-1"
 }
+
+variable "workspace" {
+  description = "Value of the workspace that the infrastructure will be deployed to"
+  type        = string
+  default     = "develop"
+}

@@ -26,8 +26,8 @@ resource "aws_dynamodb_table" "dynamodb-table" {
   }
 
   tags = {
-    Name        = "dynamodb-table-${var.region}-${terraform_workspace}-${random_uuid.name.result}"
-    Environment = "${terraform_workspace}"
+    Name        = "dynamodb-table-${var.region}-${var.workspace}-${random_uuid.name.result}"
+    Environment = "${var.workspace}"
   }
 
   lifecycle {
