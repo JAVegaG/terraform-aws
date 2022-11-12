@@ -10,21 +10,6 @@ resource "aws_dynamodb_table" "dynamodb-table" {
     type = "N"
   }
 
-  attribute {
-    name = "author"
-    type = "S"
-  }
-
-  attribute {
-    name = "description"
-    type = "S"
-  }
-
-  attribute {
-    name = "title"
-    type = "S"
-  }
-
   tags = {
     Name        = "dynamodb-table-${var.region}-${var.workspace}-${random_uuid.name.result}"
     Environment = "${var.workspace}"
