@@ -1,4 +1,4 @@
-name: Manage aws infrastructure using terrafom
+name: Update aws infrastructure using terrafom
 
 run-name: ${{ github.actor }} is updating the aws infrastructure 🚀
 
