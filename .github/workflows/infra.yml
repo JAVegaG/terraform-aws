@@ -10,7 +10,7 @@ on:
   push:
     branches:
       - develop
-#  workflow_dispatch:
+  workflow_dispatch:
 
 env:
   WORKSPACE: github.ref_name
