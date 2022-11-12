@@ -16,7 +16,7 @@ env:
   WORKSPACE: github.ref_name
 
 jobs:
-  docker:
+  Update-infra:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -59,7 +59,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           script: |
-            const output = `### Terraform workspace \'${{ WORKSPACE }} \'
+            const output = `### Terraform workspace \'$WORKSPACE \'
             #### Terraform Format and Style 🖌 \'${{ steps.fmt.outcome }}\'
             #### Terraform Initialization ⚙️ \'${{ steps.init.outcome }}\'
             #### Terraform Validation 🤖 \'${{ steps.validate.outcome }}\'
@@ -76,7 +76,7 @@ jobs:
             <details><summary>Show Plan</summary>
 
             \'\'\'\n
-            ${{ PLAN }}
+            $PLAN
             \'\'\'
 
             </details>
