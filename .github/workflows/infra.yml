@@ -42,16 +42,9 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init
-
-      - name: Terraform workspace 
-        id: workspace
         run: |
-          if [[ $WORKSPACE == "main" ]]; then
-            terraform workspace select main
-          else
-            terraform workspace select develop
-          fi
+          export TF_WORKSPACE="$WORKSPACE"
+          terraform init
 
       - name: Terraform Validate
         id: validate
