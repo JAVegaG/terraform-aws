@@ -64,7 +64,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         if: ${{ ( steps.plan.outcome == 'success' ) && ( github.event_name != 'pull_request' ) }}
-        run: terraform apply -auto-approve -var "workspace=${{ env.WORKSPACE }}"
+        run: terraform apply -auto-approve
 
       - name: Terraform Output
         if: ${{ success() && steps.apply.conclusion == 'success' }}
