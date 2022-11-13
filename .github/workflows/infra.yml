@@ -59,7 +59,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         if: ${{ ( steps.plan.outcome == 'success' ) && ( github.event_name != 'pull_request' ) }}
-        run:  
+        run: |
           export TF_WORKSPACE="$WORKSPACE"
           terraform apply -auto-approve
 
