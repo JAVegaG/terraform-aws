@@ -1,100 +1,98 @@
-resource "aws_api_gateway_rest_api" "api" {
-  name = "api-${var.region}-${var.workspace}-${random_uuid.name.result}"
+resource "aws_apigatewayv2_api" "api" {
+  name          = "api-${var.region}-${var.workspace}-${random_id.name.id}"
+  protocol_type = "HTTP"
 }
 
-resource "aws_api_gateway_resource" "resource" {
-  path_part   = "books/{proxy+}" #books/*
-  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  rest_api_id = aws_api_gateway_rest_api.api.id
+resource "aws_apigatewayv2_stage" "stage" {
+  api_id      = aws_apigatewayv2_api.api.id
+  name        = var.workspace == "main" ? "$default" : var.workspace
+  auto_deploy = var.workspace == "main" ? true : false
 }
 
-resource "aws_api_gateway_deployment" "deployment" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
+resource "aws_apigatewayv2_integration" "read_integration" {
+  api_id           = aws_apigatewayv2_api.api.id
+  integration_type = "AWS_PROXY"
 
-  #   triggers = {
-  #     redeployment = sha1(jsonencode(aws_api_gateway_rest_api.api.body))
-  #   }
+  connection_type        = "INTERNET"
+  description            = "Lambda general read"
+  integration_method     = "POST"
+  payload_format_version = "2.0"
+  integration_uri        = aws_lambda_function.read_lambda.arn
+}
+
+resource "aws_apigatewayv2_integration" "write_integration" {
+  api_id           = aws_apigatewayv2_api.api.id
+  integration_type = "AWS_PROXY"
+
+  connection_type        = "INTERNET"
+  description            = "Lambda general write"
+  integration_method     = "POST"
+  payload_format_version = "2.0"
+  integration_uri        = aws_lambda_function.write_lambda.arn
+}
+
+resource "aws_apigatewayv2_deployment" "api_deployment" {
+  api_id      = aws_apigatewayv2_api.api.id
+  description = "Api deployment"
+
+  triggers = {
+    redeployment = sha1(join(",", tolist([
+      # jsonencode(aws_apigatewayv2_integration.write_integration),
+      jsonencode(aws_apigatewayv2_route.general_get_route),
+      jsonencode(aws_apigatewayv2_route.get_id_route),
+      jsonencode(aws_apigatewayv2_route.post_route),
+      jsonencode(aws_apigatewayv2_route.put_id_route),
+      jsonencode(aws_apigatewayv2_route.delete_id_route)
+    ])))
+  }
 
   lifecycle {
     create_before_destroy = true
   }
+
 }
 
-resource "aws_api_gateway_stage" "stage" {
-  deployment_id = aws_api_gateway_deployment.deployment.id
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  stage_name    = var.workspace
+# --- General GET ---
+
+resource "aws_apigatewayv2_route" "general_get_route" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "GET /books"
+
+  target = "integrations/${aws_apigatewayv2_integration.read_integration.id}"
 }
 
+# --- GET by id ---
 
-# ---GET---
+resource "aws_apigatewayv2_route" "get_id_route" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "GET /books/{id}"
 
-resource "aws_api_gateway_method" "get_method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "GET"
-  authorization = "NONE"
+  target = "integrations/${aws_apigatewayv2_integration.read_integration.id}"
 }
 
-resource "aws_api_gateway_integration" "get_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.resource.id
-  http_method             = aws_api_gateway_method.get_method.http_method
-  integration_http_method = "GET"
-  type                    = "HTTP_PROXY"
-  uri                     = aws_lambda_function.read_lambda.invoke_arn
+# --- POST ---
+
+resource "aws_apigatewayv2_route" "post_route" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "POST /books"
+
+  target = "integrations/${aws_apigatewayv2_integration.write_integration.id}"
 }
 
-# ---POST---
+# --- PUT by id ---
 
-resource "aws_api_gateway_method" "post_method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "POST"
-  authorization = "NONE"
+resource "aws_apigatewayv2_route" "put_id_route" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "PUT /books/{id}"
+
+  target = "integrations/${aws_apigatewayv2_integration.write_integration.id}"
 }
 
-resource "aws_api_gateway_integration" "post_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.resource.id
-  http_method             = aws_api_gateway_method.post_method.http_method
-  integration_http_method = "POST"
-  type                    = "HTTP_PROXY"
-  uri                     = aws_lambda_function.write_lambda.invoke_arn
-}
+# --- DELETE by id ---
 
-# ---PUT---
+resource "aws_apigatewayv2_route" "delete_id_route" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "DELETE /books/{id}"
 
-resource "aws_api_gateway_method" "put_method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "PUT"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "put_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.resource.id
-  http_method             = aws_api_gateway_method.put_method.http_method
-  integration_http_method = "PUT"
-  type                    = "HTTP_PROXY"
-  uri                     = aws_lambda_function.write_lambda.invoke_arn
-}
-
-# ---DELETE---
-
-resource "aws_api_gateway_method" "delete_method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "DELETE"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "delete_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.resource.id
-  http_method             = aws_api_gateway_method.delete_method.http_method
-  integration_http_method = "DELETE"
-  type                    = "HTTP_PROXY"
-  uri                     = aws_lambda_function.write_lambda.invoke_arn
+  target = "integrations/${aws_apigatewayv2_integration.write_integration.id}"
 }

@@ -1,17 +1,18 @@
 resource "aws_dynamodb_table" "dynamodb-table" {
-  name           = "Books"
+  name           = var.workspace == "main" ? "${var.table-name}" : "${var.table-name}-${var.workspace}"
   billing_mode   = "PROVISIONED"
-  read_capacity  = 10
-  write_capacity = 10
-  hash_key       = "id" #partition key
+  read_capacity  = 1
+  write_capacity = 1
+
+  hash_key = "id" #partition key
 
   attribute {
     name = "id"
-    type = "N"
+    type = "S"
   }
 
   tags = {
-    Name        = "dynamodb-table-${var.region}-${var.workspace}-${random_uuid.name.result}"
+    Name        = "dynamodb-table-${var.region}-${var.workspace}-${random_id.name.id}"
     Environment = "${var.workspace}"
   }
 
