@@ -66,6 +66,10 @@ jobs:
       - name: Terraform Output
         if: ${{ success() && steps.apply.conclusion == 'success' }}
         run: |
-          echo "Terraform workspace: ${{ env.WORKSPACE }}\n" >> $GITHUB_STEP_SUMMARY
-          echo "Terraform plan:\n${{ steps.plan.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
+          export TF_WORKSPACE="$WORKSPACE"
+          echo "##Terraform workspace" >> $GITHUB_STEP_SUMMARY
+          echo "${{ env.WORKSPACE }}" >> $GITHUB_STEP_SUMMARY
+          echo "##Terraform plan" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.plan.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
+          echo "##Terraform outputs" >> $GITHUB_STEP_SUMMARY
           echo "$(terraform output -no-color)" >> $GITHUB_STEP_SUMMARY
