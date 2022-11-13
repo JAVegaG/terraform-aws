@@ -5,6 +5,6 @@ output "api_url" {
 
 output "unique_identifier" {
   description = "Value of the unique identifier for the resources created"
-  value       = "${var.region}-${var.workspace}-${random_id.name.id}"
+  value       = "${var.region}-${terraform.workspace}-${random_id.name.id}"
 }
 

@@ -68,7 +68,7 @@ resource "aws_iam_policy" "cloudwatch_lambda_read_policy" {
             "logs:PutLogEvents"
           ],
           "Resource" : [
-            "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/lambda/http-read-${var.region}-${var.workspace}-${random_id.name.id}:*"
+            "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/lambda/http-read-${var.region}-${terraform.workspace}-${random_id.name.id}:*"
           ]
         }
       ]
@@ -102,7 +102,7 @@ resource "aws_iam_policy" "cloudwatch_lambda_write_policy" {
             "logs:PutLogEvents"
           ],
           "Resource" : [
-            "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/lambda/http-write-${var.region}-${var.workspace}-${random_id.name.id}:*"
+            "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/lambda/http-write-${var.region}-${terraform.workspace}-${random_id.name.id}:*"
           ]
         }
       ]

@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "dynamodb-table" {
-  name           = var.workspace == "main" ? "${var.table-name}" : "${var.table-name}-${var.workspace}"
+  name           = terraform.workspace == "main" ? "${var.table-name}" : "${var.table-name}-${terraform.workspace}"
   billing_mode   = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 1
@@ -12,8 +12,8 @@ resource "aws_dynamodb_table" "dynamodb-table" {
   }
 
   tags = {
-    Name        = "dynamodb-table-${var.region}-${var.workspace}-${random_id.name.id}"
-    Environment = "${var.workspace}"
+    Name        = "dynamodb-table-${var.region}-${terraform.workspace}-${random_id.name.id}"
+    Environment = "${terraform.workspace}"
   }
 
   lifecycle {

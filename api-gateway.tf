@@ -1,12 +1,12 @@
 resource "aws_apigatewayv2_api" "api" {
-  name          = "api-${var.region}-${var.workspace}-${random_id.name.id}"
+  name          = "api-${var.region}-${terraform.workspace}-${random_id.name.id}"
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_stage" "stage" {
   api_id      = aws_apigatewayv2_api.api.id
-  name        = var.workspace == "main" ? "$default" : var.workspace
-  auto_deploy = var.workspace == "main" ? true : false
+  name        = terraform.workspace == "main" ? "$default" : terraform.workspace
+  auto_deploy = terraform.workspace == "main" ? true : false
 }
 
 resource "aws_apigatewayv2_integration" "read_integration" {

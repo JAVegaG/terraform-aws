@@ -11,8 +11,11 @@ terraform {
     organization = "applaudo-devops"
 
     workspaces {
-      name = "aws-lambdas-api"
+      tags = [
+        "aws-workspaces"
+      ]
     }
+
   }
 
 }

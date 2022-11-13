@@ -44,6 +44,15 @@ jobs:
         id: init
         run: terraform init
 
+      - name: Terraform workspace 
+        id: workspace
+        run: |
+          if [[ $WORKSPACE == "main" ]]; then
+            terraform workspace select main
+          else
+            terraform workspace select develop
+          fi
+
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
@@ -51,39 +60,6 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
-
-      # - name: Description
-      #   uses: actions/github-script@v6
-      #   # env:
-      #   #   PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-      #   with:
-      #     github-token: ${{ secrets.GH_TOKEN }}
-      #     script: |
-      #       const output = `#### Terraform Format and Style 🖌 \'${{ steps.fmt.outcome }}\'
-      #       #### Terraform Initialization ⚙️ \'${{ steps.init.outcome }}\'
-      #       #### Terraform Validation 🤖 \'${{ steps.validate.outcome }}\'
-      #       <details><summary>Validation Output</summary>
-
-      #       \'\'\'\n
-      #       ${{ steps.validate.outputs.stdout }}
-      #       \'\'\'
-
-      #       </details>
-
-      #       <details><summary>Show Plan</summary>
-
-      #       #### Terraform Plan 📖 \'${{ steps.plan.outcome }}\'
-
-      #       </details>
-
-      #       *Pusher: @${{ github.actor }}, Action: \'${{ github.event_name }}\', Workflow: \'${{ github.workflow }}\'*`;
-
-      #       github.rest.issues.createComment({
-      #         issue_number: context.issue.number,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         body: output
-      #       })
 
       - name: Terraform Apply
         id: apply
