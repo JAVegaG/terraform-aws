@@ -57,10 +57,6 @@ resource "aws_lambda_permission" "invoke_read_lambda_all_books_Permission" {
 
   source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}"
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
 }
 
 resource "aws_lambda_permission" "invoke_write_lambda_all_books_Permission" {
@@ -70,10 +66,6 @@ resource "aws_lambda_permission" "invoke_write_lambda_all_books_Permission" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
 
 }
 
@@ -85,10 +77,6 @@ resource "aws_lambda_permission" "invoke_read_lambda_books_id_Permission" {
 
   source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}/{id}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}/{id}"
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
 }
 
 resource "aws_lambda_permission" "invoke_write_lambda_books_id_Permission" {
@@ -98,9 +86,5 @@ resource "aws_lambda_permission" "invoke_write_lambda_books_id_Permission" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}/{id}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}/{id}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
 
 }
