@@ -10,10 +10,6 @@ on:
   push:
     branches:
       - develop
-  workflow_dispatch:
-
-env:
-  WORKSPACE: ${{ github.ref_name }}
 
 jobs:
   Update-infra:
@@ -40,11 +36,18 @@ jobs:
         run: terraform fmt -check
         continue-on-error: true
 
+      - name: Terraform Workspace
+        id: workspace
+        run: |
+          if [[ $GITHUB_EVENT_NAME == "pull_request" ]]; then
+            echo "{TF_WORKSPACE}={$GITHUB_BASE_REF}" >> $GITHUB_ENV
+          else
+            echo "{TF_WORKSPACE}={$GITHUB_REF_NAME}" >> $GITHUB_ENV
+          fi
+
       - name: Terraform Init
         id: init
-        run: |
-          export TF_WORKSPACE="$WORKSPACE"
-          terraform init
+        run: terraform init
 
       - name: Terraform Validate
         id: validate
@@ -52,26 +55,26 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: |
-          export TF_WORKSPACE="$WORKSPACE"
-          terraform plan -no-color
+        run: terraform plan -no-color
 
       - name: Terraform Apply
         id: apply
         if: ${{ ( steps.plan.outcome == 'success' ) && ( github.event_name != 'pull_request' ) }}
-        run: |
-          export TF_WORKSPACE="$WORKSPACE"
-          terraform apply -auto-approve
+        run: terraform apply -auto-approve
 
       - name: Terraform Output
+        id: output
+        if: ${{ success() && steps.apply.conclusion == 'success' }}
+        run: terraform output -no-color
+
+      - name: Summary
         if: ${{ success() && steps.apply.conclusion == 'success' }}
         run: |
-          export TF_WORKSPACE="$WORKSPACE"
           echo "## Terraform workspace" >> $GITHUB_STEP_SUMMARY
-          echo "${{ env.WORKSPACE }}" >> $GITHUB_STEP_SUMMARY
-          echo " " >> $GITHUB_STEP_SUMMARY
+          echo "${{ env.TF_WORKSPACE }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Terraform plan" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.plan.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
-          echo " " >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Terraform outputs" >> $GITHUB_STEP_SUMMARY
-          echo "$(terraform output -no-color)" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.output.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
