@@ -11,8 +11,11 @@ terraform {
     organization = "applaudo-devops"
 
     workspaces {
-      name = "aws-lambdas-api"
+      tags = [
+        "aws-workspaces"
+      ]
     }
+
   }
 
 }
@@ -21,5 +24,6 @@ provider "aws" {
   region = var.region
 }
 
-resource "random_uuid" "name" {
+resource "random_id" "name" {
+  byte_length = 8
 }
