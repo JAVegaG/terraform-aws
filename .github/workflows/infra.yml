@@ -4,6 +4,8 @@ run-name: ${{ github.actor }} is updating the aws infrastructure 🚀
 
 on:
   pull_request:
+    types:
+      [opened,synchronize,closed]
     branches:
       - develop
       - main
@@ -59,7 +61,7 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        if: ${{ ( steps.plan.outcome == 'success' ) && ( github.event_name != 'pull_request' ) }}
+        if: ${{ ( steps.plan.outcome == 'success' ) && ( github.event.pull_request.merged == true ) }}
         run: terraform apply -auto-approve
 
       - name: Terraform Output
