@@ -40,9 +40,9 @@ jobs:
         id: workspace
         run: |
           if [[ $GITHUB_EVENT_NAME == "pull_request" ]]; then
-            echo "{TF_WORKSPACE}={$GITHUB_BASE_REF}" >> $GITHUB_ENV
+            echo "TF_WORKSPACE=$GITHUB_BASE_REF" >> $GITHUB_ENV
           else
-            echo "{TF_WORKSPACE}={$GITHUB_REF_NAME}" >> $GITHUB_ENV
+            echo "TF_WORKSPACE=$GITHUB_REF_NAME" >> $GITHUB_ENV
           fi
 
       - name: Terraform Init
@@ -71,7 +71,7 @@ jobs:
         if: ${{ success() && steps.apply.conclusion == 'success' }}
         run: |
           echo "## Terraform workspace" >> $GITHUB_STEP_SUMMARY
-          echo "${{ env.TF_WORKSPACE }}" >> $GITHUB_STEP_SUMMARY
+          echo "$TF_WORKSPACE" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Terraform plan" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.plan.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
