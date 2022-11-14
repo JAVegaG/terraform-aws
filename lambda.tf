@@ -55,7 +55,7 @@ resource "aws_lambda_permission" "invoke_read_lambda_all_books_Permission" {
   function_name = aws_lambda_function.read_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}"
+  source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}"
 
   lifecycle {
     create_before_destroy = true
@@ -69,7 +69,7 @@ resource "aws_lambda_permission" "invoke_write_lambda_all_books_Permission" {
   function_name = aws_lambda_function.write_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}"
+  source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}"
 
   lifecycle {
     create_before_destroy = true
@@ -83,7 +83,7 @@ resource "aws_lambda_permission" "invoke_read_lambda_books_id_Permission" {
   function_name = aws_lambda_function.read_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}/{id}"
+  source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}/{id}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}/{id}"
 
   lifecycle {
     create_before_destroy = true
@@ -97,7 +97,7 @@ resource "aws_lambda_permission" "invoke_write_lambda_books_id_Permission" {
   function_name = aws_lambda_function.write_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}/{id}"
+  source_arn = terraform.workspace == "main" ? "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}/{id}" : "${aws_apigatewayv2_api.api.execution_arn}/*/*/${var.table-name}-${terraform.workspace}/{id}"
 
   lifecycle {
     create_before_destroy = true
