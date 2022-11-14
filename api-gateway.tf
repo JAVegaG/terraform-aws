@@ -56,7 +56,7 @@ resource "aws_apigatewayv2_deployment" "api_deployment" {
 
 resource "aws_apigatewayv2_route" "general_get_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "GET /books"
+  route_key = terraform.workspace == "main" ? "GET /${var.table-name}" : "GET /${var.table-name}-${terraform.workspace}"
 
   target = "integrations/${aws_apigatewayv2_integration.read_integration.id}"
 }
@@ -65,7 +65,7 @@ resource "aws_apigatewayv2_route" "general_get_route" {
 
 resource "aws_apigatewayv2_route" "get_id_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "GET /books/{id}"
+  route_key = terraform.workspace == "main" ? "GET /${var.table-name}/{id}" : "GET /${var.table-name}-${terraform.workspace}/{id}"
 
   target = "integrations/${aws_apigatewayv2_integration.read_integration.id}"
 }
@@ -74,7 +74,7 @@ resource "aws_apigatewayv2_route" "get_id_route" {
 
 resource "aws_apigatewayv2_route" "post_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "POST /books"
+  route_key = terraform.workspace == "main" ? "POST /${var.table-name}" : "POST /${var.table-name}-${terraform.workspace}"
 
   target = "integrations/${aws_apigatewayv2_integration.write_integration.id}"
 }
@@ -83,7 +83,7 @@ resource "aws_apigatewayv2_route" "post_route" {
 
 resource "aws_apigatewayv2_route" "put_id_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "PUT /books/{id}"
+  route_key = terraform.workspace == "main" ? "PUT /${var.table-name}/{id}" : "PUT /${var.table-name}-${terraform.workspace}/{id}"
 
   target = "integrations/${aws_apigatewayv2_integration.write_integration.id}"
 }
@@ -92,7 +92,7 @@ resource "aws_apigatewayv2_route" "put_id_route" {
 
 resource "aws_apigatewayv2_route" "delete_id_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "DELETE /books/{id}"
+  route_key = terraform.workspace == "main" ? "DELETE /${var.table-name}/{id}" : "DELETE /${var.table-name}-${terraform.workspace}/{id}"
 
   target = "integrations/${aws_apigatewayv2_integration.write_integration.id}"
 }
