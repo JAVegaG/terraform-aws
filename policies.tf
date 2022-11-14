@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_iam_write_dynamodb" {
-  name = "lambda_iam_write"
+  name = "lambda_iam_write-${random_id.name.id}"
 
   path = "/service-role/"
 
@@ -16,7 +16,7 @@ resource "aws_iam_role" "lambda_iam_write_dynamodb" {
 }
 
 resource "aws_iam_role" "lambda_iam_read_dynamodb" {
-  name = "lambda_iam_read"
+  name = "lambda_iam_read-${random_id.name.id}"
 
   path = "/service-role/"
 
@@ -169,4 +169,3 @@ resource "aws_iam_policy" "write_db_policy" {
     create_before_destroy = true
   }
 }
-
