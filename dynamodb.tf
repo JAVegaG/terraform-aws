@@ -4,10 +4,10 @@ resource "aws_dynamodb_table" "dynamodb-table" {
   read_capacity  = 1
   write_capacity = 1
 
-  hash_key = "Id" #partition key
+  hash_key = "id" #partition key
 
   attribute {
-    name = "Id"
+    name = "id"
     type = "N"
   }
 
