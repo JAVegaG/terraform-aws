@@ -21,5 +21,8 @@ resource "aws_dynamodb_table" "dynamodb-table" {
       read_capacity,
       write_capacity
     ]
+    replace_triggered_by = [
+      attribute
+    ]
   }
 }
