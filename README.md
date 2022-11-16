@@ -135,7 +135,7 @@ How ever the routes to access them are:
     >
 </div>
 
-### API Gateway URL - Production
+### API Gateway URL - Dev
 
 The URL to consume the resources is:
 
