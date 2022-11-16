@@ -1,6 +1,11 @@
 resource "aws_apigatewayv2_api" "api" {
   name          = "api-${var.region}-${terraform.workspace}-${random_id.name.id}"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["*"]
+  }
+
 }
 
 resource "aws_apigatewayv2_stage" "stage" {
