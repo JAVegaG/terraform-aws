@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3_bucket_website" {
-  bucket = "website-bucket-${var.region}-${terraform.workspace}-${random_id.name.id}"
+  bucket = "website-bucket-${var.region}-${terraform.workspace}-${random_id.name.dec}"
 }
 
 resource "aws_s3_bucket_versioning" "s3_versioning" {
