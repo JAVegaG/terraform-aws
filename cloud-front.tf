@@ -30,7 +30,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   restrictions {
-    restriction_type = "none"
+    geo_restriction {
+      restriction_type = "none"
+    }
   }
 
   tags = {
