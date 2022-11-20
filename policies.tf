@@ -9,10 +9,6 @@ resource "aws_iam_role" "lambda_iam_write_dynamodb" {
     aws_iam_policy.cloudwatch_lambda_write_policy.arn
   ]
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
 }
 
 resource "aws_iam_role" "lambda_iam_read_dynamodb" {
@@ -25,10 +21,6 @@ resource "aws_iam_role" "lambda_iam_read_dynamodb" {
     aws_iam_policy.read_db_policy.arn,
     aws_iam_policy.cloudwatch_lambda_read_policy.arn
   ]
-
-  lifecycle {
-    create_before_destroy = true
-  }
 
 }
 
@@ -75,10 +67,6 @@ resource "aws_iam_policy" "cloudwatch_lambda_read_policy" {
     }
   )
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
 }
 
 resource "aws_iam_policy" "cloudwatch_lambda_write_policy" {
@@ -109,10 +97,6 @@ resource "aws_iam_policy" "cloudwatch_lambda_write_policy" {
     }
   )
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
 }
 
 # --- DynamoDB ---
@@ -138,10 +122,6 @@ resource "aws_iam_policy" "read_db_policy" {
     }
   )
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
 }
 
 resource "aws_iam_policy" "write_db_policy" {
@@ -165,7 +145,29 @@ resource "aws_iam_policy" "write_db_policy" {
       ]
     }
   )
-  lifecycle {
-    create_before_destroy = true
+
+}
+
+# --- S3 ---
+
+data "aws_iam_policy_document" "cloudfront_s3_access" {
+
+  version = "2008-10-17"
+
+  statement {
+    sid     = "AllowCloudFront_s3_access"
+    actions = ["s3:GetObject"]
+    effect  = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    resources = ["${aws_s3_bucket.s3_bucket_website.arn}/*"]
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = ["${aws_cloudfront_distribution.s3_distribution.arn}"]
+    }
   }
+
 }
