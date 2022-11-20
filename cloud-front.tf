@@ -29,6 +29,10 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     max_ttl                = 86400
   }
 
+  restrictions {
+    restriction_type = "none"
+  }
+
   tags = {
     Environment = terraform.workspace == "main" ? "production" : "${terraform.workspace}"
   }
